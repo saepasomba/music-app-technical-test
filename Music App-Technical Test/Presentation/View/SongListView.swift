@@ -123,7 +123,7 @@ struct SongListView: View {
                     }
                 }
                 
-                Slider(value: .constant(viewModel.musicPlayerManager.currentTime))
+                Slider(value: .constant(0.25))
                     .padding(.horizontal)
                     .padding(.top)
             }
