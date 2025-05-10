@@ -38,6 +38,11 @@ struct SongListView: View {
                 await viewModel.searchSongs()
             }
         }
+        .onAppear {
+            Task {
+                await viewModel.searchSongs()
+            }
+        }
     }
     
     @ViewBuilder
@@ -50,18 +55,18 @@ struct SongListView: View {
             } else if viewModel.songsSearchResult?.resultCount == 0 && viewModel.apiState == .finished {
                 Text("No song found!")
             } else {
-                List(viewModel.songs, id: \.trackId) { song in
-                    songCard(song: song)
+                List(Array(viewModel.songs.enumerated()), id: \.element.trackId) { index, song in
+                    songCard(song: song, index: index)
                 }
             }
         }
         .frame(maxHeight: .infinity)
     }
     
-    func songCard(song: Song) -> some View {
+    func songCard(song: Song, index: Int) -> some View {
         Button(
             action: {
-                viewModel.handleSelectSong(song: song)
+                viewModel.handleSelectSong(song: song, index: index)
             }, label: {
                 HStack {
                     AsyncImage(url: URL(string: song.artworkUrl100 ?? "")) { image in
@@ -99,22 +104,28 @@ struct SongListView: View {
     @ViewBuilder
     func songControlSection() -> some View {
         if viewModel.selectedSong != nil {
-            HStack(spacing: 42) {
-                Button {
-                    print("PREVIOUS SONG")
-                } label: {
-                    Image(systemName: "backward.end.alt.fill")
+            VStack {
+                HStack(spacing: 42) {
+                    Button {
+                        viewModel.handlePlaySong(.back)
+                    } label: {
+                        Image(systemName: "backward.end.alt.fill")
+                    }
+                    Button {
+                        viewModel.handlePlaySong()
+                    } label: {
+                        Image(systemName: viewModel.isPlaying ? "pause.fill" : "play.fill")
+                    }
+                    Button {
+                        viewModel.handlePlaySong(.next)
+                    } label: {
+                        Image(systemName: "forward.end.alt.fill")
+                    }
                 }
-                Button {
-                    viewModel.handlePlaySong()
-                } label: {
-                    Image(systemName: viewModel.isPlaying ? "play.fill" : "pause.fill")
-                }
-                Button {
-                    print("PREVIOUS SONG")
-                } label: {
-                    Image(systemName: "forward.end.alt.fill")
-                }
+                
+                Slider(value: .constant(viewModel.musicPlayerManager.currentTime))
+                    .padding(.horizontal)
+                    .padding(.top)
             }
             .font(.title)
             .padding(.vertical)
