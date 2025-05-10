@@ -25,7 +25,7 @@ struct SongListView: View {
         VStack {
             HStack {
                 TextField(
-                    "Search Song",
+                    "Search Song...",
                     text: $viewModel.searchText
                 )
                 .textFieldStyle(.roundedBorder)
@@ -49,7 +49,7 @@ struct SongListView: View {
     func songList() -> some View {
         Group {
             if viewModel.debouncedSearchText.isEmpty {
-                Text("Search for a song!")
+                Text("🎵 Search for a song!")
             } else if viewModel.apiState == .loading {
                 Text("Loading...")
             } else if viewModel.songsSearchResult?.resultCount == 0 && viewModel.apiState == .finished {
@@ -77,14 +77,14 @@ struct SongListView: View {
                     .frame(width: 50, height: 50)
                     .clipShape(.rect(cornerRadius: 5))
                     VStack(alignment: .leading) {
-                        Text(song.trackName ?? "Unknown")
+                        Text(song.trackName ?? "Unknown Trackname")
                             .font(.subheadline)
                             .lineLimit(2)
-                        Text(song.artistName ?? "Unknown")
+                        Text(song.artistName ?? "Unknown Artist Name")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
-                        Text(song.collectionName ?? "Unknown")
+                        Text(song.collectionName ?? "Unknown Album")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
